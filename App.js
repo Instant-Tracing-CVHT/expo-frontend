@@ -1,27 +1,20 @@
 import React, { Component } from 'react';
 import { Platform, Text, View, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
-import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import * as TaskManager from 'expo-task-manager';
 import { Notifications } from 'expo';
+import { updateLocationCallback, createBackgroundTask, startBackgroundTask, startForegroundTask } from './lib';
+import * as Location from 'expo-location';
 
 // Somewhat global
 let updateLocation = null;
+const locationPostUrl = 'http://07d416e9.ngrok.io';
 
-TaskManager.defineTask("LOCATION_UPDATED", ({ data: { locations }, error }) => {
-  if (error) {
-    // check `error.message` for more details.
-    return;
-  }
-
-  if(updateLocation) {
-    for (var i = locations.length - 1; i >= 0; i--) {
-      updateLocation({location: locations[i], method: 'backgroundTask'});
-    }
-  }
-  // console.log('Received new locations', locations);
-});
+try {
+  createBackgroundTask(() => updateLocation);
+} catch(err) {
+  console.log("Error createBackgroundTask: "+err);
+}
 
 export default class App extends Component {
   state = {
@@ -50,58 +43,48 @@ export default class App extends Component {
     this._notificationSubscription = Notifications.addListener(this._handleNotification);
   }
 
+  componentWillUnmount() {
+    this._notificationSubscription.remove();
+  }
+
   _getLocationAsync = async () => {
+    let locationRequest = await Permissions.askAsync(Permissions.LOCATION);
 
-    let { status } = await Permissions.askAsync(Permissions.LOCATION, Permissions.NOTIFICATIONS);
-
-    this.setState({ location: 'before permissions' });
-    if (status !== 'granted') {
+    this.setState({ location: 'before location permission' });
+    if (locationRequest.status !== 'granted') {
       this.setState({
-        errorMessage: status+' You need to grant location and notification permission for this app to work',
+        errorMessage: 'You need to grant location permission for this app to work',
+      });
+    }
+
+    let notificationRequest = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+
+    this.setState({ location: 'before notification permissions' });
+    if (notificationRequest.status !== 'granted') {
+      this.setState({
+        errorMessage: 'You need to grant notification permission for this app to work',
       });
     }
 
     // Get the token that identifies this device
     this.setState({ location: 'before notifications' });
     let token = await Notifications.getExpoPushTokenAsync();
+
+    // Get current location to try permission
     this.setState({ location: 'before location' });
     let locationImmediatate = await Location.getCurrentPositionAsync({});
 
-    updateLocation = function({location, method}={}){
-      let locationPost = {
-        deviceId: token,
-        // locationRaw: JSON.stringify(location),
-        timestamp: location.timestamp,
-        sampleDate: new Date(location.timestamp).toISOString(),
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        accuracy: location.coords.accuracy,
-        method: method,
-      }
-
-      fetch('http://07d416e9.ngrok.io', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(locationPost),
-      });
-
-      this.setState({ location: JSON.stringify(locationPost) });
-    }.bind(this);
-
-    await Location.startLocationUpdatesAsync("LOCATION_UPDATED", {
-      accuracy: Location.Accuracy.Highest,
-      timeInterval: 15000,
-      foregroundService: {
-        notificationTitle: "WeTrace",
-        notificationBody: "WeTrace is sending anonymous location data",
+    let _this = this;
+    updateLocation = updateLocationCallback({
+      locationPostUrl,
+      clientId: token,
+      callback: ({locationPost}) => {
+        _this.setState({ location: JSON.stringify(locationPost) });
       }
     });
 
-    await Location.watchPositionAsync({accuracy: Location.Accuracy.Highest}, function(location){
-      updateLocation({location: location, method: 'watchPositionAsync'});});
+    startBackgroundTask();
+    startForegroundTask((location) => updateLocation({location: location, method: 'watchPositionAsync'}));
 
     this.setState({ location: 'testing' });
   };
