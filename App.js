@@ -6,6 +6,9 @@ import * as Permissions from 'expo-permissions';
 import * as TaskManager from 'expo-task-manager';
 import { Notifications } from 'expo';
 
+// Somewhat global
+let updateLocation = null;
+
 export default class App extends Component {
   state = {
     location: null,
@@ -34,8 +37,18 @@ export default class App extends Component {
   }
 
   _getLocationAsync = async () => {
+    await TaskManager.defineTask("LOCATION_UPDATED", ({ data: { locations }, error }) => {
+      if (error) {
+        // check `error.message` for more details.
+        return;
+      }
+
+      updateLocation({location: locations, method: 'task'});
+      // console.log('Received new locations', locations);
+    });
+
     let { status } = await Permissions.askAsync(Permissions.LOCATION, Permissions.NOTIFICATIONS);
-    
+
     this.setState({ location: 'before permissions' });
     if (status !== 'granted') {
       this.setState({
@@ -48,9 +61,9 @@ export default class App extends Component {
     let token = await Notifications.getExpoPushTokenAsync();
     this.setState({ location: 'before location' });
     let locationImmediatate = await Location.getCurrentPositionAsync({});
-    
+
     let _this = this;
-    let updateLocation = function({location, method}={}){
+    updateLocation = function({location, method}={}){
       let locationPost = {
         deviceId: token,
         // locationRaw: JSON.stringify(location),
@@ -73,16 +86,6 @@ export default class App extends Component {
 
       this.setState({ location: JSON.stringify(locationPost) });
     }.bind(this);
-
-    await TaskManager.defineTask("LOCATION_UPDATED", ({ data: { locations }, error }) => {
-      if (error) {
-        // check `error.message` for more details.
-        return;
-      }
-      
-      updateLocation({location: locations, method: 'task'});
-      // console.log('Received new locations', locations);
-    });
 
     await Location.startLocationUpdatesAsync("LOCATION_UPDATED", {
       accuracy: Location.Accuracy.Highest,
