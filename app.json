@@ -3,8 +3,9 @@
     "name": "instant-tracing-cvht",
     "description": "No description",
     "slug": "snack-27714985-23c8-4fd3-8d66-c4a3c179fa17",
-    "privacy": "unlisted",
+    "privacy": "public",
     "sdkVersion": "36.0.0",
+    "platforms": ["ios", "android", "web"],
     "version": "1.0.0",
     "orientation": "portrait",
     "primaryColor": "#cccccc",
@@ -12,6 +13,11 @@
     "loading": {
       "icon": "https://d1wp6m56sqw74a.cloudfront.net/~assets/c9aa1be8a6a6fe81e20c3ac4106a2ebc",
       "hideExponentText": false
+    },
+    "splash": {
+      "image": "./assets/snack-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
     },
     "packagerOpts": {
       "assetExts": [

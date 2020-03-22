@@ -9,6 +9,20 @@ import { Notifications } from 'expo';
 // Somewhat global
 let updateLocation = null;
 
+TaskManager.defineTask("LOCATION_UPDATED", ({ data: { locations }, error }) => {
+  if (error) {
+    // check `error.message` for more details.
+    return;
+  }
+
+  if(updateLocation) {
+    for (var i = locations.length - 1; i >= 0; i--) {
+      updateLocation({location: locations[i], method: 'backgroundTask'});
+    }
+  }
+  // console.log('Received new locations', locations);
+});
+
 export default class App extends Component {
   state = {
     location: null,
@@ -37,15 +51,6 @@ export default class App extends Component {
   }
 
   _getLocationAsync = async () => {
-    await TaskManager.defineTask("LOCATION_UPDATED", ({ data: { locations }, error }) => {
-      if (error) {
-        // check `error.message` for more details.
-        return;
-      }
-
-      updateLocation({location: locations, method: 'task'});
-      // console.log('Received new locations', locations);
-    });
 
     let { status } = await Permissions.askAsync(Permissions.LOCATION, Permissions.NOTIFICATIONS);
 
@@ -62,7 +67,6 @@ export default class App extends Component {
     this.setState({ location: 'before location' });
     let locationImmediatate = await Location.getCurrentPositionAsync({});
 
-    let _this = this;
     updateLocation = function({location, method}={}){
       let locationPost = {
         deviceId: token,
@@ -91,8 +95,8 @@ export default class App extends Component {
       accuracy: Location.Accuracy.Highest,
       timeInterval: 15000,
       foregroundService: {
-        notificationTitle: "Instant Tracer",
-        notificationBody: "Instant Tracer is sending anonymous data",
+        notificationTitle: "WeTrace",
+        notificationBody: "WeTrace is sending anonymous location data",
       }
     });
 
@@ -117,7 +121,6 @@ export default class App extends Component {
     );
   }
 }
-
 
 
 const styles = StyleSheet.create({
