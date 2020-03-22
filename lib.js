@@ -60,7 +60,7 @@ export function updateLocationCallback({locationPostUrl, deviceId, callback}){
       method: method,
     }
 
-    fetch('http://07d416e9.ngrok.io', {
+    fetch(locationPostUrl, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
