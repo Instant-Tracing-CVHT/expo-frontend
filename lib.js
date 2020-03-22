@@ -3,22 +3,22 @@ import * as Location from 'expo-location';
 
 const LOCATION_TASK_NAME = "LOCATION_UPDATED";
 export function createBackgroundTask(callback){
-  TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
-    if (error) {
-      console.log("Error when running LOCATION_UPDATED: " + error.message);
-      return;
-    }
+  // TaskManager.defineTask(LOCATION_TASK_NAME, ({ data: { locations }, error }) => {
+  //   if (error) {
+  //     console.log("Error when running LOCATION_UPDATED: " + error.message);
+  //     return;
+  //   }
 
-    console.log("LOCATION_UPDATED: " + locations.length);
+  //   console.log("LOCATION_UPDATED: " + locations.length);
 
-    // Need to defer until the app starts up and we have a callback function that can call setState
-    let updateLocation = callback();
-    if(updateLocation) {
-      for (var i = locations.length - 1; i >= 0; i--) {
-        updateLocation({location: locations[i], method: 'backgroundTask'});
-      }
-    }
-  });
+  //   // Need to defer until the app starts up and we have a callback function that can call setState
+  //   let updateLocation = callback();
+  //   if(updateLocation) {
+  //     for (var i = locations.length - 1; i >= 0; i--) {
+  //       updateLocation({location: locations[i], method: 'backgroundTask'});
+  //     }
+  //   }
+  // });
 
   // const status = await BackgroundFetch.getStatusAsync();
   // switch (status) {
@@ -84,20 +84,63 @@ export function updateLocationCallback({locationPostUrl, deviceId, callback}){
 }
 
 export async function startBackgroundTask(){
-  try {
-    await Location.startLocationUpdatesAsync("LOCATION_UPDATED", {
-      accuracy: Location.Accuracy.Highest,
-      timeInterval: 15000,
-      foregroundService: {
-        notificationTitle: "weTrace",
-        notificationBody: "weTrace is protecting others with your anonymous data",
-      }
-    });
-  } catch(err) {
-    console.log("Couldn't start background task: " + err);
-  }
+  // try {
+  //   await Location.startLocationUpdatesAsync("LOCATION_UPDATED", {
+  //     accuracy: Location.Accuracy.Highest,
+  //     timeInterval: 15000,
+  //     foregroundService: {
+  //       notificationTitle: "weTrace",
+  //       notificationBody: "weTrace is protecting others with your anonymous data",
+  //     }
+  //   });
+  // } catch(err) {
+  //   console.log("Couldn't start background task: " + err);
+  // }
 }
 
 export async function startForegroundTask(callback){
   await Location.watchPositionAsync({accuracy: Location.Accuracy.Highest}, callback);
 }
+
+  // _getLocationAsync = async () => {
+  //   let locationRequest = await Permissions.askAsync(Permissions.LOCATION);
+
+  //   this.setState({ location: 'before location permission' });
+  //   if (locationRequest.status !== 'granted') {
+  //     this.setState({
+  //       errorMessage: 'You need to grant location permission for this app to work',
+  //     });
+  //   }
+
+  //   let notificationRequest = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+
+  //   this.setState({ location: 'before notification permissions' });
+  //   if (notificationRequest.status !== 'granted') {
+  //     this.setState({
+  //       errorMessage: 'You need to grant notification permission for this app to work',
+  //     });
+  //   }
+
+  //   // Get the token that identifies this device
+  //   this.setState({ location: 'before notifications' });
+  //   let token = await Notifications.getExpoPushTokenAsync();
+
+  //   // Get current location to try permission
+  //   this.setState({ location: 'before location' });
+  //   let locationImmediatate = await Location.getCurrentPositionAsync({});
+
+  //   let _this = this;
+  //   updateLocation = updateLocationCallback({
+  //     locationPostUrl,
+  //     clientId: token,
+  //     callback: ({locationPost}) => {
+  //       _this.setState({ location: JSON.stringify(locationPost) });
+  //     }
+  //   });
+
+  //   startBackgroundTask();
+  //   startForegroundTask((location) => updateLocation({location: location, method: 'watchPositionAsync'}));
+
+  //   this.setState({ location: 'testing' });
+  // };
+    // this.setState({ location: 'testing' });

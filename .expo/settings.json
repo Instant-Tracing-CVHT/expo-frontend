@@ -3,6 +3,6 @@
   "lanType": "ip",
   "dev": true,
   "minify": false,
-  "urlRandomness": "4s-mgs",
+  "urlRandomness": "id-ebp",
   "https": false
 }

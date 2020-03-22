@@ -20,11 +20,25 @@
       "backgroundColor": "#ffffff"
     },
     "packagerOpts": {
+      "config": "metro.config.js",
       "assetExts": [
         "ttf",
         "mp4",
         "otf",
         "xml"
+      ],
+      "sourceExts": [
+        "expo.ts",
+        "expo.tsx",
+        "expo.js",
+        "expo.jsx",
+        "ts",
+        "tsx",
+        "js",
+        "jsx",
+        "json",
+        "wasm",
+        "svg"
       ]
     },
     "ios": {
