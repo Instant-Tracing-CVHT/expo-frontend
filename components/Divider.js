@@ -17,6 +17,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 1,
     backgroundColor: theme.colors.divider,
-    marginVertical: theme.spacing * 3,
+    marginVertical: theme.gutters,
   },
 });
