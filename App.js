@@ -75,9 +75,9 @@ export default class App extends Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.hero}>
+        <View style={styles.hero}>
           <OnboardingCarousel />
-        </ScrollView>
+        </View>
 
         <View style={styles.bottom}>
           <Divider />
@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
   hero: {
     flexGrow: 1,
     justifyContent: "center",
+    marginHorizontal: -1 * theme.gutters
   },
   bottom: {
     flex: 1,

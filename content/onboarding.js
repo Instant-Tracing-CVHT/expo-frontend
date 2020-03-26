@@ -1,13 +1,16 @@
+import OnboardingOne from '../assets/onboarding/1.svg';
+import OnboardingTwo from '../assets/illustrations/onboarding1.png';
+
 export const ONBOARDING_CAROUSEL_ENTRIES = [
   {
     title: 'Hello friend,  thanks for caring! ❤️',
     paragraph: 'Take the right actions to protect you and those around you, based on your past exposure to COVID-19 cases. No personally identified information is stored, ever.',
-    illustration: 'https://i.imgur.com/UYiroysl.jpg'
+    illustration: '../assets/illustrations/onboarding1.png'
   },
   {
     title: 'Spread love, not your data!',
     paragraph: 'Show your love and help keep others safe if you test positive. We will send a notification to people you got close to, to let them know they’ve been exposed. No identities or location data shared. We’re in this together.',
-    illustration: 'https://i.imgur.com/UPrs1EWl.jpg'
+    illustration: '../assets/illustrations/onboarding1.png'
   },
   {
     title: 'Know your risk and what to do',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, Image, Dimensions, ScrollView } from 'react-native';
 import Carousel, { Pagination } from 'react-native-x-carousel';
 import { human } from 'react-native-typography'
 import theme from '../assets/theme';
@@ -12,29 +12,30 @@ const OnboardingCarousel = () => {
   const renderItem = data => (
     <View key={data.title} style={styles.item}>
       <Text style={styles.h1}>{data.title}</Text>
-      <OnboardingOne style={styles.image} />
+      <OnboardingOne />
       <Text style={human.body}>{data.paragraph}</Text>
     </View>
   );
   
   return (
-    <Carousel
-      pagination={Pagination}
-      renderItem={renderItem}
-      data={ONBOARDING_CAROUSEL_ENTRIES}
-    />
+    <ScrollView contentContainerStyle={styles.container}>
+      <Carousel
+        pagination={Pagination}
+        renderItem={renderItem}
+        data={ONBOARDING_CAROUSEL_ENTRIES}
+      />
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexGrow: 1,
+    justifyContent: "center",
   },
   item: {
-    width: width - (theme.gutters * 2),
-    paddingTop: theme.gutters,
+    width: width,
+    padding: theme.gutters,
     paddingBottom: theme.gutters * 2
   },
   h1: {
@@ -42,6 +43,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: width - (theme.gutters * 2),
+    // height: 100,
     marginVertical: theme.gutters
   }
 });
